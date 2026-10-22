@@ -1,0 +1,80 @@
+{
+  "NM-1001": {
+    "order_id": "NM-1001",
+    "customer_name": "Ana R.",
+    "status": "Delivered",
+    "items": [{"sku": "TV-55-4K", "description": "55 inch 4K TV", "price": 499.00}],
+    "total": 499.00,
+    "order_date": "2026-10-02",
+    "shipping_method": "Standard",
+    "carrier": "FedEx",
+    "tracking_number": "7489 2210 0931",
+    "estimated_delivery": "2026-10-08",
+    "last_event": "Delivered at front door, 2026-10-07 14:32"
+  },
+  "NM-1002": {
+    "order_id": "NM-1002",
+    "customer_name": "Bruno M.",
+    "status": "In transit",
+    "items": [{"sku": "HP-BT-200", "description": "Wireless headphones", "price": 89.90}],
+    "total": 89.90,
+    "order_date": "2026-10-17",
+    "shipping_method": "Express",
+    "carrier": "UPS",
+    "tracking_number": "1Z 884 221 03 4411 2290",
+    "estimated_delivery": "2026-10-21",
+    "last_event": "Departed UPS facility, Memphis, 2026-10-20 03:10"
+  },
+  "NM-1003": {
+    "order_id": "NM-1003",
+    "customer_name": "Carla S.",
+    "status": "Delayed",
+    "items": [{"sku": "SOFA-3S-GRY", "description": "3 seat sofa, grey", "price": 1299.00}],
+    "total": 1299.00,
+    "order_date": "2026-10-05",
+    "shipping_method": "Home delivery (large item)",
+    "carrier": "NovaMart Logistics",
+    "tracking_number": "NML-55120",
+    "estimated_delivery": "2026-10-24",
+    "last_event": "Delay: carrier capacity, new estimated date 2026-10-24"
+  },
+  "NM-1004": {
+    "order_id": "NM-1004",
+    "customer_name": "Diego L.",
+    "status": "Processing",
+    "items": [{"sku": "LAP-14-I5", "description": "14 inch laptop", "price": 749.00}],
+    "total": 749.00,
+    "order_date": "2026-10-20",
+    "shipping_method": "Standard",
+    "carrier": null,
+    "tracking_number": null,
+    "estimated_delivery": "2026-10-27",
+    "last_event": "Order received, 2026-10-20 18:05"
+  },
+  "NM-1005": {
+    "order_id": "NM-1005",
+    "customer_name": "Elena P.",
+    "status": "Cancelled",
+    "items": [{"sku": "COF-MK-12", "description": "Coffee maker 12 cups", "price": 64.50}],
+    "total": 64.50,
+    "order_date": "2026-10-15",
+    "shipping_method": "Store pickup",
+    "carrier": null,
+    "tracking_number": null,
+    "estimated_delivery": null,
+    "last_event": "Cancelled by customer, 2026-10-16 09:12"
+  },
+  "NM-1006": {
+    "order_id": "NM-1006",
+    "customer_name": "Felipe A.",
+    "status": "Return in progress",
+    "items": [{"sku": "TAB-10-64", "description": "10 inch tablet 64GB", "price": 329.00}],
+    "total": 329.00,
+    "order_date": "2026-10-01",
+    "shipping_method": "Standard",
+    "carrier": "USPS",
+    "tracking_number": "9400 1000 0000 1234 5678 90",
+    "estimated_delivery": null,
+    "last_event": "Return package received at returns center, 2026-10-19 11:40"
+  }
+}

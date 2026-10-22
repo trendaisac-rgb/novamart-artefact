@@ -1,0 +1,206 @@
+# Evaluation cases. Each case states what a correct behavior looks like, not just
+# a correct sentence. Checks are deterministic (status, sources, tools, keywords);
+# faithfulness of answered cases is additionally judged by a small model.
+#
+# Fields
+#   status:          accepted final status (string or list)
+#   sources_any:     at least one cited source must come from these doc_ids
+#   no_sources:      true if the answer must cite nothing
+#   tool_called:     a tool that must appear in the trace
+#   tool_not_called: a tool that must NOT appear in the trace
+#   must_include:    strings that must appear in the answer (case-insensitive).
+#                    An item can be a list of alternatives: any one is enough.
+#   must_not_include: strings that must not appear in the answer
+
+- id: policy-electronics-window
+  category: policy
+  question: What is the return window for a laptop?
+  expect:
+    status: answered
+    sources_any: [returns_and_refunds]
+    must_include: ["15"]
+
+- id: policy-holiday-overrides-electronics
+  category: policy
+  question: A customer bought a TV on December 20 and wants to return it on January 10. Is that allowed?
+  expect:
+    status: answered
+    sources_any: [returns_and_refunds]
+    must_include: [["January 15", "Jan 15", "15 de janeiro"]]
+    must_not_include: ["not allowed", "cannot return"]
+
+- id: policy-no-receipt
+  category: policy
+  question: Customer has no receipt and wants to return a jacket. What do I do?
+  expect:
+    status: answered
+    sources_any: [returns_and_refunds]
+    must_include: ["store credit", "90 days", ["photo ID", "ID"]]
+
+- id: policy-price-match-amazon
+  category: policy
+  question: Do we price match Amazon?
+  expect:
+    status: answered
+    sources_any: [price_match]
+    must_include: [["sold and shipped by Amazon", "shipped by Amazon", "Amazon itself"], "marketplace"]
+
+- id: policy-price-match-timing
+  category: policy
+  question: How long after the purchase can a customer still ask for a price match?
+  expect:
+    status: answered
+    sources_any: [price_match]
+    must_include: ["14 days"]
+
+- id: policy-final-sale-exchange
+  category: policy
+  question: Can a customer exchange underwear for a different size?
+  expect:
+    status: answered
+    sources_any: [exchanges, returns_and_refunds]
+    must_include: [["cannot", "can't", "not"], ["final sale", "hygiene"]]
+
+- id: policy-defect-after-30
+  category: policy
+  question: A customer's blender stopped working 45 days after purchase. What are their options?
+  expect:
+    status: answered
+    sources_any: [damaged_or_defective]
+    must_include: ["manufacturer"]
+
+- id: policy-delivery-damage-48h
+  category: policy
+  question: A sofa was delivered yesterday with a scratch and the customer called today. What is the process?
+  expect:
+    status: answered
+    sources_any: [damaged_or_defective]
+    must_include: ["48 hours", "photo"]
+
+- id: policy-gift-card-cash
+  category: policy
+  question: Can gift cards be redeemed for cash?
+  expect:
+    status: answered
+    sources_any: [gift_cards_and_store_credit]
+    must_include: [["cannot", "can't", "not"], ["law", "state"]]
+
+- id: policy-points-value
+  category: policy
+  question: How much are 500 NovaPoints worth?
+  expect:
+    status: answered
+    sources_any: [loyalty_program]
+    must_include: [["5 dollars", "$5", "5 USD"]]
+
+- id: policy-refund-needs-manager
+  category: policy
+  question: Customer wants a 650 dollar refund in cash for a return, with receipt. Can I process it?
+  expect:
+    status: [answered, escalated]
+    sources_any: [returns_and_refunds, escalation_and_contacts]
+    must_include: ["manager", "check"]
+
+- id: policy-portuguese
+  category: policy
+  question: Qual o prazo para devolver um fone de ouvido?
+  expect:
+    status: answered
+    sources_any: [returns_and_refunds]
+    must_include: ["15", "dias"]
+
+- id: tool-order-in-transit
+  category: tool
+  question: Where is order NM-1002?
+  expect:
+    status: answered
+    tool_called: get_order_status
+    must_include: [["UPS", "in transit"]]
+
+- id: tool-order-delayed-what-to-say
+  category: tool
+  question: Order NM-1003 shows as delayed. What do I tell the customer?
+  expect:
+    status: answered
+    tool_called: get_order_status
+    sources_any: [delivery_and_order_tracking]
+    must_include: [["1,000 points", "1000 points", "10 dollar", "$10"]]
+
+- id: tool-missing-package
+  category: tool
+  question: Order NM-1001 says delivered but the customer never got it. What now?
+  expect:
+    status: answered
+    tool_called: get_order_status
+    sources_any: [delivery_and_order_tracking]
+    must_include: ["48 hours"]
+
+- id: tool-cancel-processing
+  category: tool
+  question: Can order NM-1004 still be cancelled?
+  expect:
+    status: answered
+    tool_called: get_order_status
+    sources_any: [delivery_and_order_tracking]
+    must_include: [["yes", "can be cancelled", "can still be cancelled", "processing"]]
+
+- id: tool-order-not-found
+  category: tool
+  question: What is the status of order NM-9999?
+  expect:
+    status: [answered, needs_info]
+    tool_called: get_order_status
+    must_include: [["not found", "could not find", "couldn't find", "no order", "check the"]]
+
+- id: tool-missing-order-number
+  category: tool
+  question: A customer is asking about the status of their order.
+  expect:
+    status: needs_info
+    tool_not_called: get_order_status
+    must_include: [["order number", "order id", "NM-"]]
+
+- id: decline-employee-discount
+  category: decline
+  question: What is the employee discount percentage?
+  expect:
+    status: declined
+    no_sources: true
+    must_not_include: ["10%", "15%", "20%"]
+
+- id: decline-marketplace-returns
+  category: decline
+  question: What is the return policy for items sold by NovaMart Marketplace sellers?
+  expect:
+    status: [declined, escalated]
+    must_not_include: ["30 days for marketplace"]
+
+- id: decline-out-of-scope-hr
+  category: decline
+  question: How many vacation days do I get per year?
+  expect:
+    status: declined
+    must_include: ["HR"]
+
+- id: decline-out-of-scope-weather
+  category: decline
+  question: What is the weather like in Chicago today?
+  expect:
+    status: declined
+    no_sources: true
+
+- id: edge-exception-outside-window
+  category: edge
+  question: Can a customer return an unopened mattress after 60 days?
+  expect:
+    status: [answered, escalated]
+    sources_any: [returns_and_refunds, escalation_and_contacts]
+    must_include: ["30 days"]
+
+- id: edge-warranty-period-partial
+  category: edge
+  question: What is the warranty period for TVs?
+  expect:
+    status: [answered, declined]
+    must_include: ["manufacturer"]
+    must_not_include: ["1 year warranty", "2 year warranty", "12 months warranty"]
