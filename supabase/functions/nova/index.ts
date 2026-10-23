@@ -16,7 +16,7 @@ import { complete, OpenAIResponses } from "./openai.ts";
 
 const env = (k: string, fallback = "") => Deno.env.get(k) ?? fallback;
 const OPENAI_API_KEY = env("OPENAI_API_KEY");
-const AGENT_MODEL = env("NOVA_AGENT_MODEL", "gpt-6.1-sol");
+const AGENT_MODEL = env("NOVA_AGENT_MODEL", "gpt-6-luna");
 const SMALL_MODEL = env("NOVA_SMALL_MODEL", "gpt-6-luna");
 const REASONING_EFFORT = env("NOVA_REASONING_EFFORT", "low");
 const PER_MINUTE = Number(env("NOVA_RATE_PER_MINUTE", "10"));
