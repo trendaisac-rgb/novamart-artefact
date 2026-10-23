@@ -52,6 +52,10 @@ export class OpenAIResponses implements ModelClient {
       input: req.input,
       tools: req.tools,
       tool_choice: "required", // the model must act; `respond` is the exit
+      // Nothing is kept on OpenAI's side. The loop carries the state itself, so
+      // reasoning comes back encrypted and is passed into the next call.
+      store: false,
+      include: ["reasoning.encrypted_content"],
     };
     if (this.reasoningEffort) body["reasoning"] = { effort: this.reasoningEffort };
     const data = await post(this.apiKey, body);
@@ -61,7 +65,7 @@ export class OpenAIResponses implements ModelClient {
 
 /** Plain text completion, for small side jobs like clustering the knowledge gaps. */
 export async function complete(apiKey: string, model: string, prompt: string): Promise<string> {
-  const data = await post(apiKey, { model, input: prompt });
+  const data = await post(apiKey, { model, input: prompt, store: false });
   const out = (data["output"] ?? []) as {
     type: string;
     content?: { type: string; text?: string }[];

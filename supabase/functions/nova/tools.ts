@@ -64,7 +64,7 @@ export const TOOLS = [
     type: "function",
     name: "escalate_to_ops",
     description:
-      "Open a ticket with the Operations helpdesk. Use it when the policies say the case needs Operations, when the question is not covered by the documentation and the employee needs an answer, or when a human decision is required.",
+      "Open a ticket with the Operations helpdesk. Use it only when the documentation sends the case to the Operations team (requests for an exception to a policy, claims or approvals above the store's limits, POS errors) or when the question is not covered and the employee needs an answer. Never for approvals the store manager gives in the store.",
     strict: true,
     parameters: {
       type: "object",
@@ -109,7 +109,8 @@ export const TOOLS = [
         },
         sources: {
           type: "array",
-          description: "Sections the answer is based on. Empty for declined.",
+          description:
+            "Sections the answer is based on, copied exactly from search_policies results in this conversation. For declined: empty, or only the section that names where to send the employee.",
           items: {
             type: "object",
             additionalProperties: false,
@@ -132,6 +133,8 @@ export interface ToolContext {
   kb: KnowledgeBase;
   store: Store;
   storeId: string | null;
+  /** Eval runs: tools behave the same but write nothing to NovaMart's systems. */
+  dryRun?: boolean;
 }
 
 /** Runs one tool call. Returns an error object instead of throwing, so the model can recover. */
@@ -171,7 +174,7 @@ export async function runTool(name: string, args: Record<string, unknown>, ctx: 
         order_id: (args["order_id"] as string | null) ?? null,
         summary: String(args["summary"] ?? ""),
       };
-      await ctx.store.createTicket(ticket);
+      if (!ctx.dryRun) await ctx.store.createTicket(ticket);
       return {
         ticket_id: ticket.ticket_id,
         expected_response: priority === "blocking" ? "2 hours" : "1 business day",

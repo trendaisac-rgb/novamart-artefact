@@ -89,6 +89,21 @@ function isGrounded(status: Status, sources: unknown[], trace: TraceStep[]) {
   );
 }
 
+const sectionKey = (docId: unknown, heading: unknown) =>
+  `${String(docId).trim().toLowerCase()}::${String(heading).trim().toLowerCase()}`;
+
+/** The sections search_policies actually returned in this run: the only ones that may be cited. */
+function sectionsRead(trace: TraceStep[]): Set<string> {
+  const read = new Set<string>();
+  for (const t of trace) {
+    if (t.tool !== "search_policies") continue;
+    for (const r of (t.output["results"] ?? []) as { doc_id?: unknown; heading?: unknown }[]) {
+      read.add(sectionKey(r.doc_id, r.heading));
+    }
+  }
+  return read;
+}
+
 export async function runAgent(opts: RunOptions): Promise<AgentResult> {
   const emit = opts.emit ?? (() => {});
   const maxSteps = opts.maxSteps ?? 8;
@@ -99,6 +114,7 @@ export async function runAgent(opts: RunOptions): Promise<AgentResult> {
   const trace: TraceStep[] = [];
   const usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0 };
   let ticketId: string | null = null;
+  let citationsRejected = false;
 
   const finish = async (
     partial: Omit<AgentResult, "trace" | "usage" | "grounded" | "ticket_id">,
@@ -165,11 +181,38 @@ export async function runAgent(opts: RunOptions): Promise<AgentResult> {
         note = `invalid status '${status}', treated as declined`;
         status = "declined";
       }
-      const sources = Array.isArray(data["sources"])
+      const cited = Array.isArray(data["sources"])
         ? (data["sources"] as { doc_id: string; heading: string }[]).filter(
             (s) => s && typeof s === "object",
           )
         : [];
+
+      // Cite or decline, enforced here rather than trusted to the prompt: a source
+      // only counts if search_policies returned it in this run. The model gets one
+      // chance to fix its citations; after that, an answer with nothing behind it
+      // becomes a decline.
+      const read = sectionsRead(trace);
+      const sources = cited.filter((s) => read.has(sectionKey(s.doc_id, s.heading)));
+      const unread = cited.length - sources.length;
+      const ungrounded = status === "answered" && !isGrounded(status, sources, trace);
+      if ((unread > 0 || ungrounded) && !citationsRejected) {
+        citationsRejected = true;
+        input.push({
+          type: "function_call_output",
+          call_id: respondCall.call_id,
+          output:
+            "Rejected: sources must be sections that search_policies returned in this conversation, " +
+            "copied exactly. Search if you have not, then call respond again; " +
+            "if the documentation does not cover the question, decline.",
+        });
+        continue;
+      }
+      if (ungrounded) return safeDecline(step, "answer cited no section it had read");
+      if (unread > 0) {
+        note = [note, `dropped ${unread} source(s) the agent had not read`]
+          .filter(Boolean)
+          .join("; ");
+      }
       return finish({
         status,
         answer: String(data["answer"] ?? "").trim(),
@@ -185,7 +228,12 @@ export async function runAgent(opts: RunOptions): Promise<AgentResult> {
     for (const call of others) {
       const args = parseArgs(call.arguments);
       emit({ type: "tool_call", tool: call.name!, input: args });
-      const output = await runTool(call.name!, args, { kb: opts.kb, store: opts.store, storeId });
+      const output = await runTool(call.name!, args, {
+        kb: opts.kb,
+        store: opts.store,
+        storeId,
+        dryRun: !(opts.logGaps ?? true),
+      });
       if (call.name === "escalate_to_ops" && typeof output["ticket_id"] === "string")
         ticketId = output["ticket_id"];
       emit({ type: "tool_result", tool: call.name!, input: args, output });

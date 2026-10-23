@@ -159,9 +159,57 @@ Deno.test("order lookup counts as grounding", async () => {
   assertEquals(r.trace[0]!.output["status"], "In transit"); // order id normalized to upper case
 });
 
-Deno.test("an answer with no source and no data is not grounded", async () => {
-  const r = await run([[respond("answered", "Probably 30 days.")]]).result;
-  assertEquals(r.grounded, false);
+Deno.test("an answer with nothing behind it is rejected once, then declined", async () => {
+  const { model, result } = run([
+    [respond("answered", "Probably 30 days.")],
+    [respond("answered", "Still 30 days.")],
+  ]);
+  const r = await result;
+  assertEquals(r.status, "declined");
+  assertEquals(r.note, "answer cited no section it had read");
+  const feedback = model.calls[1]!.input.at(-1) as { output: string };
+  assert(feedback.output.startsWith("Rejected"));
+});
+
+Deno.test("citing a section it never retrieved is rejected; fixing it passes", async () => {
+  const { model, result } = run([
+    [call("search_policies", { query: "laptop return window" })],
+    [
+      respond("answered", "15 days.", {
+        sources: [{ doc_id: "price_match", heading: "Exclusions" }], // in the catalog, not retrieved
+      }),
+    ],
+    [
+      respond("answered", "15 days.", {
+        sources: [{ doc_id: "returns_and_refunds", heading: "standard return window " }],
+      }),
+    ],
+  ]);
+  const r = await result;
+  assertEquals(r.status, "answered");
+  assertEquals(model.calls.length, 3);
+  assertEquals(r.sources.length, 1); // matched despite case and spacing
+});
+
+Deno.test("unread sources are dropped from a decline", async () => {
+  const r = await run([
+    [call("search_policies", { query: "employee discount" })],
+    [
+      respond("declined", "Not covered.", {
+        decline_reason: "not_in_docs",
+        sources: [{ doc_id: "loyalty_program", heading: "Using points" }],
+      }),
+    ],
+    [
+      respond("declined", "Not covered.", {
+        decline_reason: "not_in_docs",
+        sources: [{ doc_id: "loyalty_program", heading: "Using points" }],
+      }),
+    ],
+  ]).result;
+  assertEquals(r.status, "declined");
+  assertEquals(r.sources.length, 0);
+  assert(r.note?.includes("dropped 1 source"));
 });
 
 Deno.test("respond sent with other tools is rejected and the loop continues", async () => {
@@ -228,6 +276,20 @@ Deno.test("escalation opens a ticket and returns its id", async () => {
   assertEquals(store.tickets.length, 1);
   assertEquals(r.ticket_id, store.tickets[0]!.ticket_id);
   assertEquals(store.gaps[0]!.ticket_id, r.ticket_id);
+});
+
+Deno.test("eval runs escalate without writing a ticket", async () => {
+  const { store, result } = run(
+    [
+      [call("escalate_to_ops", { summary: "exception", priority: "normal", order_id: null })],
+      [respond("escalated", "Sent to Operations.", { decline_reason: "needs_human" })],
+    ],
+    { logGaps: false },
+  );
+  const r = await result;
+  assertEquals(r.status, "escalated");
+  assertEquals(store.tickets.length, 0);
+  assert(r.ticket_id?.startsWith("OPS-"));
 });
 
 Deno.test("free text without respond is declined, never passed on", async () => {

@@ -48,10 +48,14 @@ def load_env() -> None:
                 os.environ.setdefault(k.strip(), v.strip())
 
 
-def ask(client: httpx.Client, question: str) -> dict:
-    """POST /ask and read the event stream until the final result."""
+def ask(client: httpx.Client, question: str, history: list | None = None) -> dict:
+    """POST /ask and read the event stream until the final result.
+
+    log_gaps=False marks an eval run: nothing is logged as a gap and no ticket is written.
+    """
+    body = {"question": question, "log_gaps": False, "history": history or []}
     for attempt in range(4):
-        with client.stream("POST", "/ask", json={"question": question, "log_gaps": False}) as r:
+        with client.stream("POST", "/ask", json=body) as r:
             if r.status_code == 429:  # the demo link is rate limited; wait and retry
                 time.sleep(20)
                 continue
@@ -91,6 +95,8 @@ def check_case(expect: dict, result: dict) -> list[str]:
         failures.append(f"sources={sorted(cited) or 'none'}, expected one of {expect['sources_any']}")
     if expect.get("no_sources") and result["sources"]:
         failures.append("cited sources but should not")
+    if expect.get("sources_only") and not cited <= set(expect["sources_only"]):
+        failures.append(f"sources={sorted(cited)}, only allowed {expect['sources_only']}")
 
     tools_used = [t["tool"] for t in result["trace"]]
     if expect.get("tool_called") and expect["tool_called"] not in tools_used:
@@ -171,7 +177,7 @@ def main() -> None:
     for case in cases:
         t0 = time.time()
         try:
-            result = ask(client, case["question"])
+            result = ask(client, case["question"], case.get("history"))
             failures = check_case(case.get("expect", {}), result)
         except Exception as exc:  # a crash is a failed case, not a crashed suite
             result = {"status": "declined", "answer": "", "next_step": "", "sources": [], "trace": [],
@@ -218,7 +224,9 @@ def render_report(rows: list[dict], passed: int, total: int, rate: float, second
     for r in rows:
         by_cat.setdefault(r["category"], []).append(r)
     lines = [f"# Eval report, {datetime.now().strftime('%Y-%m-%d %H:%M')}", "",
-             f"**{passed}/{total} passed ({rate:.0%})** in {seconds:.0f}s", "", "## By category", "",
+             f"**{passed}/{total} passed ({rate:.0%})** in {seconds:.0f}s"
+             + ("" if any(r["judge"] for r in rows) else " (deterministic checks only, LLM judge off)"),
+             "", "## By category", "",
              "| category | passed | total |", "|---|---|---|"]
     for cat, items in by_cat.items():
         lines.append(f"| {cat} | {sum(1 for r in items if not r['failures'])} | {len(items)} |")
@@ -235,7 +243,7 @@ def render_report(rows: list[dict], passed: int, total: int, rate: float, second
             lines.append("Sources: " + "; ".join(f"{s.get('doc_id')} > {s.get('heading')}" for s in r["sources"]))
         if r["judge"]:
             lines.append(f"Judge: {r['judge'].get('note')}")
-        lines.append(f"Steps: {r['steps']}, {r['seconds']}s")
+        lines.append(f"Steps: {r['steps']}" + (f", {r['seconds']}s" if r.get("seconds") is not None else ""))
         lines.append("")
     return "\n".join(lines)
 

@@ -67,7 +67,7 @@ alter table public.knowledge_gaps   enable row level security;
 alter table public.tickets          enable row level security;
 alter table public.ask_log          enable row level security;
 
--- Atomic check-and-record for the rate limit.
+-- Check-and-record for the rate limit (made atomic in 20261023000002).
 create or replace function public.allow_ask(p_client text, per_minute int, per_day int)
 returns boolean
 language plpgsql
