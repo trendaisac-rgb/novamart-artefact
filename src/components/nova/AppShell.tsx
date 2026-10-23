@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/", label: "Store floor", sub: "Ask Nova", icon: MessageSquareText },
-  { to: "/docs", label: "Documentation", sub: "What Nova knows", icon: BookOpen },
+  { to: "/docs", label: "Documentation", sub: "Policies & mock orders", icon: BookOpen },
   { to: "/ops", label: "Ops console", sub: "Knowledge gaps", icon: Inbox },
   { to: "/quality", label: "Quality", sub: "Eval results", icon: Gauge },
   { to: "/brand", label: "Brand", sub: "Identity system", icon: Palette },

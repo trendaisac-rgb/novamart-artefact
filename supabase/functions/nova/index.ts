@@ -4,6 +4,7 @@
  *   GET  /health            agent status, model, how much documentation
  *   GET  /catalog           documents and section headings
  *   GET  /policies/:docId   one document, for the source viewer
+ *   GET  /orders            the mock order API's data (what get_order_status can find)
  *   POST /ask               the agent; streams each step as server-sent events
  *   GET  /gaps              the knowledge gap log, newest first
  *   POST /gaps/summarize    themes and documents to write, from a small model
@@ -164,6 +165,7 @@ Deno.serve(async (req) => {
         sections: doc.sections.map((s) => ({ heading: s.heading, text: s.body })),
       });
     }
+    if (req.method === "GET" && path === "/orders") return json(await store.listOrders());
     if (req.method === "POST" && path === "/ask") return await ask(req);
     if (req.method === "GET" && path === "/gaps") {
       const entries = await store.listGaps();

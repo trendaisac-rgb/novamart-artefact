@@ -88,6 +88,16 @@ export interface PolicyDoc {
   sections: { heading: string; text: string }[];
 }
 
+export interface MockOrder {
+  order_id: string;
+  status: string | null;
+  description: string;
+  total: number | null;
+  order_date: string | null;
+  carrier: string | null;
+  estimated_delivery: string | null;
+}
+
 export interface GapEntry {
   ts: string;
   store_id: string | null;
@@ -180,6 +190,7 @@ export const api = {
   health: () => fn<Health>("/health"),
   catalog: () => fn<CatalogDoc[]>("/catalog"),
   policy: (docId: string) => fn<PolicyDoc>(`/policies/${encodeURIComponent(docId)}`),
+  orders: () => fn<MockOrder[]>("/orders"),
   gaps: () => fn<GapList>("/gaps"),
   summarizeGaps: () =>
     fn<{ markdown: string; count: number }>("/gaps/summarize", { method: "POST" }),

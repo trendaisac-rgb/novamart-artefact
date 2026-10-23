@@ -13,7 +13,7 @@ OpenAI Responses API, one Supabase Edge Function, no agent framework. A web app 
 On the live link (rate limited, it runs on my API key), the example chips on the first screen cover the brief:
 
 1. **Grounded answer.** "Do we price match Amazon?" The answer cites the sections it used; click one to open the document with the section highlighted.
-2. **Tool call.** "Order NM-1003 shows as delayed. What do I tell the customer?" The agent looks up the order; the card shows a tracker built from the tool output.
+2. **Tool call.** "Order NM-1003 shows as delayed. What do I tell the customer?" The agent looks up the order; the card shows a tracker built from the tool output. The six mock orders, one per status, are listed on the **Documentation** page with an "Ask Nova" button each.
 3. **Graceful decline.** "What is the employee discount percentage?" Not documented, so Nova says so and points to HR. Open the **Ops console**: the decline is already there as a documentation gap.
 4. **Who decides.** "Customer wants a 650 dollar refund in cash" gets "get the store manager's approval now", because the policy puts that decision in the store. "Return an unopened mattress after 60 days" is an exception, which the policy sends to Operations, so Nova opens a ticket.
 5. **Quality.** The eval results behind all of this.

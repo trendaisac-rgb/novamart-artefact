@@ -40,6 +40,28 @@ export class SupabaseStore implements Store {
     return (data?.data as Record<string, unknown>) ?? null;
   }
 
+  /** The mock order API's data, for the Documentation page. Order-level fields only. */
+  async listOrders() {
+    const { data, error } = await this.db.from("orders").select("order_id, data").order("order_id");
+    if (error) throw error;
+    return data.map(({ order_id, data: d }) => {
+      const o = d as Record<string, unknown>;
+      const items = (o["items"] ?? []) as { description?: string }[];
+      return {
+        order_id,
+        status: o["status"] ?? null,
+        description: items
+          .map((i) => i.description)
+          .filter(Boolean)
+          .join(", "),
+        total: o["total"] ?? null,
+        order_date: o["order_date"] ?? null,
+        carrier: o["carrier"] ?? null,
+        estimated_delivery: o["estimated_delivery"] ?? null,
+      };
+    });
+  }
+
   async createTicket(t: Ticket) {
     const { error } = await this.db.from("tickets").insert(t);
     if (error) throw error;
