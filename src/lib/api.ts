@@ -116,7 +116,7 @@ export interface EvalCase {
   sources: Source[];
   tools: string[];
   steps: number;
-  seconds: number;
+  seconds: number | null;
 }
 
 export interface EvalRun {

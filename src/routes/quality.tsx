@@ -102,7 +102,7 @@ function CaseRow({ c }: { c: EvalCase }) {
           <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11.5px] text-stone">
             <span>tools: {c.tools.join(", ") || "none"}</span>
             <span>
-              {c.steps} steps · {c.seconds}s
+              {c.steps} steps{c.seconds != null ? ` · ${c.seconds}s` : ""}
             </span>
             {c.sources.length ? (
               <span>cited: {c.sources.map((s) => `${s.doc_id} › ${s.heading}`).join("; ")}</span>
@@ -144,7 +144,7 @@ function Quality() {
       <PageHeader
         eyebrow="Quality"
         title="Measured, not assumed"
-        description="24 test questions run against the live agent. Deterministic checks on status, citations and tools, then a small model judges every answered case against the exact sections the agent read. Below the threshold, the release is blocked."
+        description="Test questions run against the live agent. Deterministic checks on status, citations and tools; when the judge is on, a model also grades every answered case against the exact sections the agent read. The badge below says which checks this run used."
       />
 
       {evals.isPending ? (
@@ -179,8 +179,8 @@ function Quality() {
                   "Employee discount, marketplace returns, vacation days, the weather. Nothing may be invented.",
                 ],
                 [
-                  "Edge cases (2)",
-                  "An exception outside the window, a warranty question the docs only partly cover.",
+                  "Edge cases (5)",
+                  "An exception outside the window, a partly documented warranty, a prompt injection, a defective final sale item, a follow-up turn.",
                 ],
               ].map(([t, d]) => (
                 <li key={t} className="flex gap-3">
@@ -215,7 +215,8 @@ function Quality() {
               </div>
               <p className="mt-2 text-[14px] text-mist">
                 Gate at {Math.round(run.threshold * 100)}% · LLM judge {run.judge ? "on" : "off"} ·{" "}
-                {new Date(run.generated_at).toLocaleString()} · {Math.round(run.seconds)}s
+                {new Date(run.generated_at).toLocaleString()}
+                {run.seconds ? ` · ${Math.round(run.seconds)}s` : ""}
               </p>
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {byCategory.map(([cat, v]) => (
