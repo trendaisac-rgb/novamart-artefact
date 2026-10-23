@@ -4,6 +4,8 @@ An internal AI assistant for NovaMart store employees. It answers policy questio
 
 Built on the OpenAI Responses API, running as one Supabase Edge Function, with a web app on top that shows each answer with its sources and the steps the agent took. No agent framework.
 
+**Live:** https://novamart-artefact.lovable.app · **Production note:** [PRODUCTION_NOTE.md](PRODUCTION_NOTE.md) · **Latest eval run:** [evals/results/latest.md](evals/results/latest.md)
+
 ![NovaMart Assist](public/brand/og-image.png)
 
 ## What it does
@@ -13,9 +15,17 @@ Built on the OpenAI Responses API, running as one Supabase Edge Function, with a
 - Declines with a clear reason when the documentation does not cover the question, instead of guessing. Escalates to Operations when a policy requires a human decision.
 - Logs every decline to a knowledge gap table so Operations can see what to document next (see "The idea I would push").
 
-## Try it
+## A three minute tour
 
-**Live:** https://novamart-artefact.lovable.app (rate limited, it runs on my API key).
+On the live link (rate limited, it runs on my API key), the example chips on the first screen cover the brief:
+
+1. **Grounded answer.** "Do we price match Amazon?" The answer cites the sections it used; click one to open the real document with the section highlighted.
+2. **Tool call.** "Order NM-1003 shows as delayed. What do I tell the customer?" The agent looks up the order and the card shows the tracker built from the tool output.
+3. **Graceful decline.** "What is the employee discount percentage?" Not in the documentation, so Nova says so and points to HR. Open the **Ops console**: the decline is already there as a documentation gap.
+4. **Escalation.** "Can a customer return an unopened mattress after 60 days?" Outside the rule, so Nova explains the rule and opens a ticket for Operations instead of deciding.
+5. **Quality.** The eval results behind all of this.
+
+## Run it
 
 **Locally, against the deployed agent:**
 
@@ -38,6 +48,7 @@ supabase functions deploy nova
 
 ```bash
 make test                 # 14 offline tests of the agent loop and retrieval (Deno, no API calls)
+make setup                # installs the eval harness and creates evals/.env to fill in
 make evals                # 24 eval cases against the deployed agent + LLM judge
 ```
 
@@ -82,6 +93,7 @@ supabase/
   seed.sql             generated from policies/ and orders.json by scripts/build_seed.py
 evals/                 24 cases, harness that calls the deployed agent, reports
 src/                   web app (React, TanStack Start, built with Lovable), a thin client
+                       (src/components/ui is the standard shadcn/ui kit Lovable generates)
 public/brand/          NovaMart logo files
 PRODUCTION_NOTE.md     how I would take this to production
 ```
@@ -117,7 +129,7 @@ The web app holds no business logic. Every answer comes from the Edge Function, 
 
 **9. Degrade honestly.** A `respond` sent together with other tool calls (before seeing their results) is rejected and the model answers again. Free text without `respond` is treated as a decline, never passed on as an answer. If the loop hits the step limit, the employee gets a decline and a pointer to the helpdesk, never a half answer.
 
-**10. A public link with guardrails.** The live link spends a real API key, so the function rate limits per client (a hash, never the IP) and per day, and the OpenAI account has a spending cap.
+**10. A public link with guardrails.** The live link spends a real API key, so the function rate limits per client (10 a minute, keyed by a hash, never the raw IP) and caps the day at 500 questions, on top of a spending limit on the OpenAI project.
 
 ## The idea I would push: the knowledge gap loop
 
@@ -153,6 +165,12 @@ The remaining failure is `decline-employee-discount`. The agent declined correct
 Two checks were corrected along the way, both because the test was wrong, not the agent: "48 hours" vs. "48-hour" in `policy-delivery-damage-48h`, and the missing package case above. Each correction is commented in `cases.yaml`.
 
 The cases are a regression set, not a benchmark: when a failure is found and fixed, it gets a case so it cannot come back silently.
+
+## Scope, time and AI tools
+
+The brief asks for 4 to 6 focused hours and says UI design is not evaluated, so here is where to look. The part that answers the brief is small on purpose: one Edge Function (seven files, about 870 lines), 8 policy documents, the eval harness and the production note. The brand and the web app go beyond the brief deliberately: NovaMart is the client in this exercise, and I wanted to show what the store team would actually use. They hold no business logic, so you can review the whole agent without opening `src/`.
+
+I built it with AI assistants, as the brief encourages: Claude Code for code, tests and docs, Lovable for the web app. The decisions are mine (platform, Supabase, BM25 over Postgres full-text search, `respond` as a tool, the gap loop, which eval failures to fix and which to leave visible), and I can walk through any line.
 
 ## Assumptions
 
