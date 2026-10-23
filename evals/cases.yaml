@@ -130,7 +130,7 @@
   category: tool
   question: Order NM-1001 says delivered but the customer never got it. What now?
   expect:
-    status: answered
+    status: [answered, escalated]   # NM-1001 is $499; claims above $300 go to Operations (escalation_and_contacts)
     tool_called: get_order_status
     sources_any: [delivery_and_order_tracking]
     must_include: ["48 hours"]
