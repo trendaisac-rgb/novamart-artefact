@@ -1,5 +1,15 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Gauge, Inbox, Menu, MessageSquareText, Palette, X } from "lucide-react";
+import {
+  BellRing,
+  BookOpen,
+  Gauge,
+  Inbox,
+  Menu,
+  MessageSquareText,
+  Palette,
+  Ticket,
+  X,
+} from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { AgentStatus } from "./AgentStatus";
@@ -8,10 +18,44 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/", label: "Store floor", sub: "Ask Nova", icon: MessageSquareText },
+  { to: "/docs", label: "Documentation", sub: "What Nova knows", icon: BookOpen },
   { to: "/ops", label: "Ops console", sub: "Knowledge gaps", icon: Inbox },
   { to: "/quality", label: "Quality", sub: "Eval results", icon: Gauge },
   { to: "/brand", label: "Brand", sub: "Identity system", icon: Palette },
 ] as const;
+
+// On the roadmap (README, "What I would do with more time"). Shown, not built.
+const NEXT = [
+  { label: "Tickets", sub: "Track escalations to Ops", icon: Ticket },
+  { label: "Weekly digest", sub: "Gaps sent to the ops lead", icon: BellRing },
+] as const;
+
+function NextLinks() {
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="px-3 pb-1 text-[10.5px] font-semibold tracking-[0.14em] text-mist/60 uppercase">
+        Next
+      </p>
+      {NEXT.map(({ label, sub, icon: Icon }) => (
+        <div
+          key={label}
+          aria-disabled="true"
+          title="On the roadmap, not built in this prototype"
+          className="flex cursor-default items-center gap-3 rounded-xl px-3 py-2 text-mist/60"
+        >
+          <Icon className="size-[18px] shrink-0" />
+          <span className="flex flex-1 flex-col leading-tight">
+            <span className="text-[14px] font-semibold">{label}</span>
+            <span className="text-[11.5px] text-mist/50">{sub}</span>
+          </span>
+          <span className="rounded-full border border-ink-3 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-mist/70 uppercase">
+            Soon
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
@@ -51,7 +95,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 
 function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <div className="flex h-full flex-col gap-8 px-4 py-6">
+    <div className="flex h-full flex-col gap-6 overflow-y-auto px-4 py-6">
       <div className="px-2">
         <Logo reversed className="h-[30px]" />
         <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-ink-3 px-2.5 py-0.5 text-[11px] font-semibold tracking-[0.12em] text-mist uppercase">
@@ -59,6 +103,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
         </p>
       </div>
       <NavLinks {...(onNavigate ? { onNavigate } : {})} />
+      <NextLinks />
       <div className="mt-auto space-y-3">
         <AgentStatus />
         <p className="px-2 text-[11px] leading-relaxed text-mist/70">

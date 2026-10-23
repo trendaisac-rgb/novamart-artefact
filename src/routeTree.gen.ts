@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BrandRouteImport } from './routes/brand'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as QualityRouteImport } from './routes/quality'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const BrandRoute = BrandRouteImport.update({
   id: '/brand',
   path: '/brand',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OpsRoute = OpsRouteImport.update({
@@ -38,12 +44,14 @@ const QualityRoute = QualityRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/brand': typeof BrandRoute
+  '/docs': typeof DocsRoute
   '/ops': typeof OpsRoute
   '/quality': typeof QualityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/brand': typeof BrandRoute
+  '/docs': typeof DocsRoute
   '/ops': typeof OpsRoute
   '/quality': typeof QualityRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/brand': typeof BrandRoute
+  '/docs': typeof DocsRoute
   '/ops': typeof OpsRoute
   '/quality': typeof QualityRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/brand' | '/ops' | '/quality'
+  fullPaths: '/' | '/brand' | '/docs' | '/ops' | '/quality'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/brand' | '/ops' | '/quality'
-  id: '__root__' | '/' | '/brand' | '/ops' | '/quality'
+  to: '/' | '/brand' | '/docs' | '/ops' | '/quality'
+  id: '__root__' | '/' | '/brand' | '/docs' | '/ops' | '/quality'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BrandRoute: typeof BrandRoute
+  DocsRoute: typeof DocsRoute
   OpsRoute: typeof OpsRoute
   QualityRoute: typeof QualityRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/brand'
       fullPath: '/brand'
       preLoaderRoute: typeof BrandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ops': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BrandRoute: BrandRoute,
+  DocsRoute: DocsRoute,
   OpsRoute: OpsRoute,
   QualityRoute: QualityRoute,
 }

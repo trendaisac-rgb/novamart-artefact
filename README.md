@@ -91,9 +91,11 @@ PRODUCTION_NOTE.md     how I would take this to production
 The web app holds no business logic. Every answer comes from the Edge Function, the same endpoint the evals test.
 
 - **Store floor.** The employee asks; the answer streams in as the agent works: "Searching policies for…", "Looking up order NM-1003…". Each answer is a card with the status, the answer, the next step and the sources. Clicking a source opens the real policy document with the cited section highlighted. Order lookups render as an order tracker built from the tool output, so the employee sees the data, not only the summary.
+- **Documentation.** Every policy document Nova answers from, read live from the same tables the agent uses. It makes the boundary visible: if a rule is not on this page, Nova declines.
 - **Ops console.** The knowledge gap loop as a screen: every decline and escalation with the store and the searches tried, filters by reason, and a button that clusters the gaps into "documents to write".
 - **Quality.** The latest eval run, read from `public/evals/latest.json`, which the eval harness writes and is committed with the code.
 - **Brand.** NovaMart is invented, so I gave it an identity: logo, palette, type, and the "spark" used as the loader.
+- **Next.** Two greyed out menu items, Tickets and Weekly digest, mark the roadmap below. They are labelled as not built; nothing behind them is faked.
 
 ## Key decisions
 
