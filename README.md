@@ -15,7 +15,7 @@ Built on the OpenAI Responses API, running as one Supabase Edge Function, with a
 
 ## Try it
 
-**Live:** `<live link>` (rate limited, it runs on my API key).
+**Live:** https://novamart-artefact.lovable.app (rate limited, it runs on my API key).
 
 **Locally, against the deployed agent:**
 
