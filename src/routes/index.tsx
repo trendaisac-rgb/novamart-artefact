@@ -129,11 +129,7 @@ function StoreFloor() {
       }
     } catch (err) {
       const message =
-        err instanceof ApiError
-          ? err.status === 0
-            ? `${err.message}. Start it with "make api".`
-            : err.message
-          : "The connection to the agent was interrupted.";
+        err instanceof ApiError ? err.message : "The connection to the agent was interrupted.";
       patch(id, (t) =>
         t.phase === "working" ? { ...t, phase: "error", error: message, endedAt: Date.now() } : t,
       );
@@ -253,9 +249,7 @@ function StoreFloor() {
           {offline ? (
             <div className="mb-3 flex items-center gap-2 rounded-xl border border-nova/30 bg-nova-soft/70 px-3 py-2 text-[13px] text-ink">
               <span className="size-2 rounded-full bg-nova" />
-              The agent API isn't reachable. Run{" "}
-              <code className="rounded bg-white px-1.5 font-mono text-xs">make api</code> and this
-              page connects on its own.
+              The agent isn't reachable right now. This page reconnects on its own.
             </div>
           ) : null}
           <form

@@ -1,6 +1,6 @@
 /**
- * Client for the NovaMart agent API (agent/src/novamart/server.py).
- * The UI holds no business logic: every answer comes from the Python agent.
+ * Client for the NovaMart agent API (supabase/functions/nova).
+ * The UI holds no business logic: every answer comes from the Edge Function.
  */
 
 export type Status = "answered" | "declined" | "escalated" | "needs_info";
@@ -135,28 +135,14 @@ export interface Turn {
   content: string;
 }
 
-const STORAGE_KEY = "novamart.apiUrl";
-export const DEFAULT_API_URL =
-  (import.meta.env["VITE_NOVAMART_API_URL"] as string | undefined) ?? "http://localhost:8000";
-
-export function getApiUrl(): string {
-  if (typeof window === "undefined") return DEFAULT_API_URL;
-  try {
-    return window.localStorage.getItem(STORAGE_KEY) || DEFAULT_API_URL;
-  } catch {
-    return DEFAULT_API_URL;
-  }
-}
-
-export function setApiUrl(url: string): void {
-  try {
-    const clean = url.trim().replace(/\/+$/, "");
-    if (!clean || clean === DEFAULT_API_URL) window.localStorage.removeItem(STORAGE_KEY);
-    else window.localStorage.setItem(STORAGE_KEY, clean);
-  } catch {
-    /* storage unavailable: keep the default */
-  }
-}
+// The agent runs as a Supabase Edge Function. Both values are public by design:
+// the publishable key only lets the browser call the function, and every table
+// is locked behind row level security.
+const SUPABASE_URL = (import.meta.env["VITE_SUPABASE_URL"] as string | undefined) ?? "";
+const PUBLISHABLE_KEY =
+  (import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string | undefined) ?? "";
+const API_URL = `${SUPABASE_URL}/functions/v1/nova`;
+const HEADERS = { apikey: PUBLISHABLE_KEY, Authorization: `Bearer ${PUBLISHABLE_KEY}` };
 
 export class ApiError extends Error {
   constructor(
@@ -167,12 +153,12 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(url: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${getApiUrl()}${path}`, init);
+    res = await fetch(url, init);
   } catch {
-    throw new ApiError(`Can't reach the agent at ${getApiUrl()}`, 0);
+    throw new ApiError("Can't reach the agent right now", 0);
   }
   if (!res.ok) {
     let detail = res.statusText;
@@ -187,31 +173,35 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T;
 }
 
+const fn = <T>(path: string, init?: RequestInit) =>
+  request<T>(`${API_URL}${path}`, { ...init, headers: { ...HEADERS, ...init?.headers } });
+
 export const api = {
-  health: () => request<Health>("/api/health"),
-  catalog: () => request<CatalogDoc[]>("/api/catalog"),
-  policy: (docId: string) => request<PolicyDoc>(`/api/policies/${encodeURIComponent(docId)}`),
-  gaps: () => request<GapList>("/api/gaps"),
+  health: () => fn<Health>("/health"),
+  catalog: () => fn<CatalogDoc[]>("/catalog"),
+  policy: (docId: string) => fn<PolicyDoc>(`/policies/${encodeURIComponent(docId)}`),
+  gaps: () => fn<GapList>("/gaps"),
   summarizeGaps: () =>
-    request<{ markdown: string; count: number }>("/api/gaps/summarize", { method: "POST" }),
-  evals: () => request<EvalRun>("/api/evals/latest"),
+    fn<{ markdown: string; count: number }>("/gaps/summarize", { method: "POST" }),
+  // Eval results are committed with the code by evals/run_evals.py and served as a static file.
+  evals: () => request<EvalRun>("/evals/latest.json"),
 };
 
-/** POST /api/ask and yield each server-sent event as the agent works. */
+/** POST /ask and yield each server-sent event as the agent works. */
 export async function* ask(
   body: { question: string; store_id?: string; history?: Turn[] },
   signal?: AbortSignal,
 ): AsyncGenerator<AgentEvent> {
   let res: Response;
   try {
-    res = await fetch(`${getApiUrl()}/api/ask`, {
+    res = await fetch(`${API_URL}/ask`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { ...HEADERS, "Content-Type": "application/json" },
       body: JSON.stringify(body),
       ...(signal ? { signal } : {}),
     });
   } catch {
-    throw new ApiError(`Can't reach the agent at ${getApiUrl()}`, 0);
+    throw new ApiError("Can't reach the agent right now", 0);
   }
   if (!res.ok || !res.body) {
     let detail = res.statusText;

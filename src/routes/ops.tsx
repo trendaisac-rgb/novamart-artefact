@@ -91,13 +91,12 @@ function OpsConsole() {
       <PageHeader
         eyebrow="Ops console"
         title="Every unanswered question becomes a to-do"
-        description="When Nova declines or escalates, the question lands here with the store and the searches it tried. Ops writes the missing policy once, drops the markdown in the policy folder, and Nova answers it from the next question on."
+        description="When Nova declines or escalates, the question lands here with the store and the searches it tried. Ops writes the missing policy once and Nova answers it from the next question on, with no retraining and no deploy."
       />
 
       {health.isError ? (
         <div className="mt-8 rounded-2xl border border-dashed border-line bg-white/60 p-8 text-center text-stone">
-          The agent API isn't reachable. Run{" "}
-          <code className="rounded bg-sand px-1.5 font-mono text-sm">make api</code>.
+          The agent isn't reachable right now. This page reconnects on its own.
         </div>
       ) : (
         <>
@@ -283,7 +282,7 @@ function OpsConsole() {
                   ))}
                 </ul>
                 <p className="mt-4 rounded-xl bg-sand/70 p-3 font-mono text-[11.5px] leading-relaxed text-ink/70">
-                  agent/data/policies/*.md
+                  supabase/policies/*.md
                   <br />
                   one “##” heading per rule
                 </p>

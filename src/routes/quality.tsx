@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 
 import { PageHeader, Spark, StatusBadge } from "@/components/nova/brand";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useHealth } from "@/hooks/use-agent";
 import { ApiError, api, type EvalCase } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -123,13 +122,7 @@ function CaseRow({ c }: { c: EvalCase }) {
 }
 
 function Quality() {
-  const health = useHealth();
-  const evals = useQuery({
-    queryKey: ["evals"],
-    queryFn: api.evals,
-    enabled: health.isSuccess,
-    retry: false,
-  });
+  const evals = useQuery({ queryKey: ["evals"], queryFn: api.evals, retry: false });
   const [onlyFailures, setOnlyFailures] = useState(false);
 
   const byCategory = useMemo(() => {
@@ -154,12 +147,7 @@ function Quality() {
         description="24 test questions run against the live agent. Deterministic checks on status, citations and tools, then a small model judges every answered case against the exact sections the agent read. Below the threshold, the release is blocked."
       />
 
-      {health.isError ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-line bg-white/60 p-8 text-center text-stone">
-          The agent API isn't reachable. Run{" "}
-          <code className="rounded bg-sand px-1.5 font-mono text-sm">make api</code>.
-        </div>
-      ) : evals.isPending && health.isSuccess ? (
+      {evals.isPending ? (
         <Skeleton className="mt-8 h-56 w-full rounded-3xl" />
       ) : noRun ? (
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_1fr]">

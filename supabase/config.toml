@@ -1,0 +1,4 @@
+project_id = "novamart"
+
+[functions.nova]
+verify_jwt = true

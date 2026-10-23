@@ -1,33 +1,28 @@
-.PHONY: setup api ui demo chat test evals gaps
-
-AGENT := agent
+.PHONY: setup ui test evals seed deploy
 
 setup:
-	cd $(AGENT) && python -m pip install -e ".[dev]"
-	@test -f $(AGENT)/.env || cp $(AGENT)/.env.example $(AGENT)/.env
 	npm install --no-package-lock
-	@echo "Now put your ANTHROPIC_API_KEY in agent/.env"
+	python -m pip install -r evals/requirements.txt
+	@test -f evals/.env || cp evals/.env.example evals/.env
+	@echo "Fill evals/.env to run the evals"
 
-# Agent API for the web app
-api:
-	cd $(AGENT) && uvicorn novamart.server:app --port 8000 --reload
-
-# Web app
+# Web app, talking to the deployed Edge Function
 ui:
 	npm run dev -- --port 8080
 
-# Both, in one terminal
-demo:
-	$(MAKE) -j2 api ui
-
-chat:
-	cd $(AGENT) && python -m novamart.cli --store S-012
-
+# Offline tests of the agent loop and retrieval (needs Deno)
 test:
-	cd $(AGENT) && pytest -q
+	deno test --allow-read supabase/functions/nova
 
+# Eval suite against the deployed agent
 evals:
-	cd $(AGENT) && python evals/run_evals.py
+	python evals/run_evals.py
 
-gaps:
-	cd $(AGENT) && python scripts/gap_report.py --summarize
+# Rebuild supabase/seed.sql after editing supabase/policies/*.md
+seed:
+	python scripts/build_seed.py
+
+# Push schema, seed and function to the linked Supabase project
+deploy:
+	supabase db push --include-seed
+	supabase functions deploy nova
