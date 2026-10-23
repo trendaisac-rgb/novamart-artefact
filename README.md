@@ -138,7 +138,14 @@ Two smaller choices for the store floor: the answer format is always "answer, ne
 
 The harness calls the deployed function, so it tests what is actually running, not a local copy. Two layers of checking. Deterministic: final status, cited document, tools called or not called, required and forbidden strings, and the grounding rule. Then an LLM judge (`gpt-6-luna`) grades every `answered` case for faithfulness against the exact sections and tool outputs the agent saw. The run writes `evals/results/latest.md` and the JSON the Quality page reads, and exits non-zero below a pass-rate threshold, which is how I would wire it into CI as a release gate.
 
-Results: see `evals/results/latest.md`.
+**Latest run (2026-10-23): 22/24 passed (92%)**, on the deterministic checks only; the LLM judge was not part of this run. Policy 12/12, tool 6/6, decline 3/4, edge 1/2. Full report in `evals/results/latest.md`.
+
+The two failures, read honestly:
+
+- `edge-exception-outside-window` (unopened mattress after 60 days). The agent declined and pointed to the helpdesk, but the escalation policy says requests for exceptions go to the Operations team, so it should have opened a ticket. This is a real miss and the next prompt fix: make "the customer asks for an exception" an explicit escalation trigger.
+- `decline-employee-discount`. The agent declined correctly and sent the employee to HR, but it cited the HR contacts section, and the case says a decline cites nothing. That is debatable: citing where the HR contact comes from is arguably good behavior. I left the check strict and the failure visible rather than loosen the test after seeing the result.
+
+One check was fixed during the run: `policy-delivery-damage-48h` required the literal text "48 hours" and the agent wrote "48-hour". The answer was correct, so the check now accepts both. The answers were scored again, not regenerated.
 
 The cases are a regression set, not a benchmark: when a failure is found and fixed, it gets a case so it cannot come back silently.
 

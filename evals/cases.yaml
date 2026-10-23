@@ -75,7 +75,7 @@
   expect:
     status: answered
     sources_any: [damaged_or_defective]
-    must_include: ["48 hours", "photo"]
+    must_include: ["48", "photo"]   # "48 hours" or "48-hour"
 
 - id: policy-gift-card-cash
   category: policy

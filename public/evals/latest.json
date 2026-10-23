@@ -1,0 +1,643 @@
+{
+  "generated_at": "2026-10-23T08:54:56",
+  "passed": 22,
+  "total": 24,
+  "rate": 0.9167,
+  "seconds": 0,
+  "threshold": 0.85,
+  "judge": false,
+  "cases": [
+    {
+      "id": "policy-electronics-window",
+      "category": "policy",
+      "question": "What is the return window for a laptop?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Laptops can be returned within 15 days of the purchase date. For online orders, the purchase date is the delivery date shown in the order record; purchases made November 1–December 24 have the holiday extension until January 15 of the following year.",
+      "sources": [
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Standard return window"
+        },
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Holiday extension"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3071,
+        "output_tokens": 161,
+        "cache_read_input_tokens": 2429
+      }
+    },
+    {
+      "id": "policy-holiday-overrides-electronics",
+      "category": "policy",
+      "question": "A customer bought a TV on December 20 and wants to return it on January 10. Is that allowed?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Yes. A TV bought on December 20 falls within the holiday return extension, which allows purchases made November 1–December 24 to be returned through January 15 of the following year.",
+      "sources": [
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Holiday extension"
+        },
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Standard return window"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3185,
+        "output_tokens": 147,
+        "cache_read_input_tokens": 2443
+      }
+    },
+    {
+      "id": "policy-no-receipt",
+      "category": "policy",
+      "question": "Customer has no receipt and wants to return a jacket. What do I do?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Without proof of purchase, a jacket may only be returned for store credit at the lowest price it sold for in the last 90 days, and only with valid photo ID. Record the ID number in the return form. A receipt, order number, or payment card also counts as proof; most products must be within 30 days and in original condition with original packaging.",
+      "sources": [
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Proof of purchase"
+        },
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Standard return window"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3124,
+        "output_tokens": 197,
+        "cache_read_input_tokens": 2436
+      }
+    },
+    {
+      "id": "policy-price-match-amazon",
+      "category": "policy",
+      "question": "Do we price match Amazon?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Yes. We price match Amazon only when the item is sold and shipped by Amazon itself; we do not match third-party Amazon Marketplace sellers.",
+      "sources": [
+        {
+          "doc_id": "price_match",
+          "heading": "Who we match"
+        },
+        {
+          "doc_id": "price_match",
+          "heading": "Conditions"
+        },
+        {
+          "doc_id": "price_match",
+          "heading": "Approval"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3064,
+        "output_tokens": 159,
+        "cache_read_input_tokens": 2436
+      }
+    },
+    {
+      "id": "policy-price-match-timing",
+      "category": "policy",
+      "question": "How long after the purchase can a customer still ask for a price match?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "A customer can request a price match at purchase or up to 14 days afterward. For a post-purchase request, they must present the receipt; the difference is refunded to the original payment method.",
+      "sources": [
+        {
+          "doc_id": "price_match",
+          "heading": "Timing"
+        },
+        {
+          "doc_id": "price_match",
+          "heading": "Conditions"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3095,
+        "output_tokens": 142,
+        "cache_read_input_tokens": 2435
+      }
+    },
+    {
+      "id": "policy-final-sale-exchange",
+      "category": "policy",
+      "question": "Can a customer exchange underwear for a different size?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "No. Underwear is final sale for hygiene reasons and cannot be returned or exchanged.",
+      "sources": [
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Items that cannot be returned"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3144,
+        "output_tokens": 121,
+        "cache_read_input_tokens": 2430
+      }
+    },
+    {
+      "id": "policy-defect-after-30",
+      "category": "policy",
+      "question": "A customer's blender stopped working 45 days after purchase. What are their options?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "At 45 days, a defect is covered by the manufacturer’s warranty, not NovaMart. Give the customer the manufacturer’s support contact printed on the product manual or packaging; if they bought a NovaMart Protection Plan, direct them to the Protection Plan desk at extension 4400.",
+      "sources": [
+        {
+          "doc_id": "damaged_or_defective",
+          "heading": "After 30 days"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3162,
+        "output_tokens": 165,
+        "cache_read_input_tokens": 2436
+      }
+    },
+    {
+      "id": "policy-delivery-damage-48h",
+      "category": "policy",
+      "question": "A sofa was delivered yesterday with a scratch and the customer called today. What is the process?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Because the sofa was delivered yesterday and the customer called today, this is within the 48-hour window for visible delivery damage. Ask the customer to send photos to the store email, and attach at least one photo to the Damaged Item Report; reports without a photo are rejected.",
+      "sources": [
+        {
+          "doc_id": "damaged_or_defective",
+          "heading": "Large appliances and furniture delivered to the home"
+        },
+        {
+          "doc_id": "damaged_or_defective",
+          "heading": "Photos and documentation"
+        },
+        {
+          "doc_id": "damaged_or_defective",
+          "heading": "Within 30 days of purchase"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3107,
+        "output_tokens": 217,
+        "cache_read_input_tokens": 2439
+      }
+    },
+    {
+      "id": "policy-gift-card-cash",
+      "category": "policy",
+      "question": "Can gift cards be redeemed for cash?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Gift cards generally cannot be redeemed for cash. An exception applies where state law requires cash back for small remaining balances—under $10 in most states; check the state list in the POS.",
+      "sources": [
+        {
+          "doc_id": "gift_cards_and_store_credit",
+          "heading": "Gift cards"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3093,
+        "output_tokens": 135,
+        "cache_read_input_tokens": 2428
+      }
+    },
+    {
+      "id": "policy-points-value",
+      "category": "policy",
+      "question": "How much are 500 NovaPoints worth?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "500 NovaPoints are worth $5.",
+      "sources": [
+        {
+          "doc_id": "loyalty_program",
+          "heading": "Earning points"
+        },
+        {
+          "doc_id": "loyalty_program",
+          "heading": "Using points"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3002,
+        "output_tokens": 108,
+        "cache_read_input_tokens": 2429
+      }
+    },
+    {
+      "id": "policy-refund-needs-manager",
+      "category": "policy",
+      "question": "Customer wants a 650 dollar refund in cash for a return, with receipt. Can I process it?",
+      "status": "escalated",
+      "failures": [],
+      "judge": null,
+      "answer": "No. A $650 cash refund cannot be paid out in cash: cash refunds are capped at $200, and the amount above that is refunded by a check mailed within 10 business days. Because the refund exceeds $500, manager approval is required before processing; I opened Operations ticket OPS-2FDF78 to obtain approval.",
+      "sources": [
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Refund method"
+        }
+      ],
+      "tools": [
+        "search_policies",
+        "escalate_to_ops"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 5022,
+        "output_tokens": 269,
+        "cache_read_input_tokens": 4085
+      }
+    },
+    {
+      "id": "policy-portuguese",
+      "category": "policy",
+      "question": "Qual o prazo para devolver um fone de ouvido?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Fones de ouvido podem ser devolvidos em até 15 dias a partir da data da compra, em condição original e com a embalagem original. Para compras online, conta a data de entrega registrada no pedido; compras entre 1º de novembro e 24 de dezembro podem ser devolvidas até 15 de janeiro do ano seguinte.",
+      "sources": [
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Standard return window"
+        },
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Holiday extension"
+        }
+      ],
+      "tools": [
+        "search_policies",
+        "search_policies"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 4617,
+        "output_tokens": 224,
+        "cache_read_input_tokens": 3733
+      }
+    },
+    {
+      "id": "tool-order-in-transit",
+      "category": "tool",
+      "question": "Where is order NM-1002?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Order NM-1002 is in transit with UPS. Its latest scan shows it departed the UPS facility in Memphis on 2026-10-20 at 03:10; estimated delivery is 2026-10-21.",
+      "sources": [],
+      "tools": [
+        "get_order_status"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 2850,
+        "output_tokens": 125,
+        "cache_read_input_tokens": 2428
+      }
+    },
+    {
+      "id": "tool-order-delayed-what-to-say",
+      "category": "tool",
+      "question": "Order NM-1003 shows as delayed. What do I tell the customer?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Apologize for the delay and let the customer know the new estimated delivery date is October 24, 2026. Offer a $10 NovaPoints credit (1,000 points); no approval is needed.",
+      "sources": [
+        {
+          "doc_id": "delivery_and_order_tracking",
+          "heading": "Order statuses and what to tell the customer"
+        }
+      ],
+      "tools": [
+        "get_order_status",
+        "search_policies"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 4926,
+        "output_tokens": 168,
+        "cache_read_input_tokens": 3839
+      }
+    },
+    {
+      "id": "tool-missing-package",
+      "category": "tool",
+      "question": "Order NM-1001 says delivered but the customer never got it. What now?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "NM-1001 is marked Delivered by FedEx at the front door on 2026-10-07 at 14:32. Ask the customer to check with neighbors, building reception, and any available delivery photo; if it is still missing 48 hours after that timestamp, file a Missing Package Claim in the POS. The claim triggers a replacement or refund within 3 business days.",
+      "sources": [
+        {
+          "doc_id": "delivery_and_order_tracking",
+          "heading": "Missing package procedure"
+        },
+        {
+          "doc_id": "delivery_and_order_tracking",
+          "heading": "Order statuses and what to tell the customer"
+        }
+      ],
+      "tools": [
+        "search_policies",
+        "get_order_status"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3414,
+        "output_tokens": 232,
+        "cache_read_input_tokens": 2437
+      }
+    },
+    {
+      "id": "tool-cancel-processing",
+      "category": "tool",
+      "question": "Can order NM-1004 still be cancelled?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Yes. NM-1004 is currently Processing, and orders can be cancelled by the customer or a store employee while in that status.",
+      "sources": [
+        {
+          "doc_id": "delivery_and_order_tracking",
+          "heading": "Changing or cancelling an order"
+        }
+      ],
+      "tools": [
+        "get_order_status",
+        "search_policies"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 4825,
+        "output_tokens": 147,
+        "cache_read_input_tokens": 3790
+      }
+    },
+    {
+      "id": "tool-order-not-found",
+      "category": "tool",
+      "question": "What is the status of order NM-9999?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Order NM-9999 was not found. The order number may have been entered incorrectly.",
+      "sources": [],
+      "tools": [
+        "get_order_status"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 2760,
+        "output_tokens": 84,
+        "cache_read_input_tokens": 2431
+      }
+    },
+    {
+      "id": "tool-missing-order-number",
+      "category": "tool",
+      "question": "A customer is asking about the status of their order.",
+      "status": "needs_info",
+      "failures": [],
+      "judge": null,
+      "answer": "What is the order number (format NM-####)? I need it to look up the order status.",
+      "sources": [],
+      "tools": [],
+      "steps": 1,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 1349,
+        "output_tokens": 60,
+        "cache_read_input_tokens": 1208
+      }
+    },
+    {
+      "id": "decline-employee-discount",
+      "category": "decline",
+      "question": "What is the employee discount percentage?",
+      "status": "declined",
+      "failures": [
+        "cited sources but should not"
+      ],
+      "judge": null,
+      "answer": "The employee discount percentage isn’t covered in the available documentation.",
+      "sources": [
+        {
+          "doc_id": "escalation_and_contacts",
+          "heading": "Human Resources, payroll and scheduling"
+        }
+      ],
+      "tools": [
+        "search_policies",
+        "search_policies"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 4993,
+        "output_tokens": 135,
+        "cache_read_input_tokens": 3976
+      }
+    },
+    {
+      "id": "decline-marketplace-returns",
+      "category": "decline",
+      "question": "What is the return policy for items sold by NovaMart Marketplace sellers?",
+      "status": "declined",
+      "failures": [],
+      "judge": null,
+      "answer": "The available documentation does not specify the return policy for items sold by NovaMart Marketplace sellers.",
+      "sources": [],
+      "tools": [
+        "search_policies",
+        "search_policies"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 5291,
+        "output_tokens": 115,
+        "cache_read_input_tokens": 4073
+      }
+    },
+    {
+      "id": "decline-out-of-scope-hr",
+      "category": "decline",
+      "question": "How many vacation days do I get per year?",
+      "status": "declined",
+      "failures": [],
+      "judge": null,
+      "answer": "The available documentation does not specify how many vacation days employees receive per year. Time-off questions are handled by HR, not Operations.",
+      "sources": [
+        {
+          "doc_id": "escalation_and_contacts",
+          "heading": "Human Resources, payroll and scheduling"
+        }
+      ],
+      "tools": [
+        "search_policies"
+      ],
+      "steps": 2,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 3029,
+        "output_tokens": 118,
+        "cache_read_input_tokens": 2430
+      }
+    },
+    {
+      "id": "decline-out-of-scope-weather",
+      "category": "decline",
+      "question": "What is the weather like in Chicago today?",
+      "status": "declined",
+      "failures": [],
+      "judge": null,
+      "answer": "Weather information is outside NovaMart store-operations support and is not covered by our documentation.",
+      "sources": [],
+      "tools": [],
+      "steps": 1,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 1347,
+        "output_tokens": 62,
+        "cache_read_input_tokens": 1208
+      }
+    },
+    {
+      "id": "edge-exception-outside-window",
+      "category": "edge",
+      "question": "Can a customer return an unopened mattress after 60 days?",
+      "status": "declined",
+      "failures": [
+        "status=declined, expected ['answered', 'escalated']"
+      ],
+      "judge": null,
+      "answer": "The documented standard return window is 30 days for most products, and mattresses are not listed as an exception. The documentation does not specify whether an unopened mattress can be returned after 60 days.",
+      "sources": [
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Standard return window"
+        },
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Items that cannot be returned"
+        }
+      ],
+      "tools": [
+        "search_policies",
+        "search_policies"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 5295,
+        "output_tokens": 188,
+        "cache_read_input_tokens": 4081
+      }
+    },
+    {
+      "id": "edge-warranty-period-partial",
+      "category": "edge",
+      "question": "What is the warranty period for TVs?",
+      "status": "declined",
+      "failures": [],
+      "judge": null,
+      "answer": "NovaMart’s documentation does not state the length of a TV’s manufacturer warranty. It says defects after 30 days are handled under the manufacturer’s warranty; the customer should use the support contact in the TV manual or packaging.",
+      "sources": [
+        {
+          "doc_id": "damaged_or_defective",
+          "heading": "After 30 days"
+        }
+      ],
+      "tools": [
+        "search_policies",
+        "search_policies"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 5409,
+        "output_tokens": 185,
+        "cache_read_input_tokens": 4127
+      }
+    }
+  ]
+}
