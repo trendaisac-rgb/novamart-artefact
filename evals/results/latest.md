@@ -1,14 +1,14 @@
-# Eval report, 2026-10-23 12:19
+# Eval report, 2026-10-26 08:31
 
-_Collected by calling the deployed function from inside the database (pg_net), because the build sandbox cannot reach the API; scored with `check_case` and `render_report` from `evals/run_evals.py`. LLM judge not run in this pass._
+_Collected by calling the deployed function from inside the database (pg_net), because the build sandbox cannot reach the API; scored with `check_case` and `render_report` from `evals/run_evals.py`. 26 answers are from the 2026-10-23 run; `policy-final-sale-exchange` and the new `policy-portuguese-final-sale` were re-run on 2026-10-26 after fixing the exchanges policy (see README, Evaluation). LLM judge not run in this pass._
 
-**27/27 passed (100%)** (deterministic checks only, LLM judge off)
+**28/28 passed (100%)** (deterministic checks only, LLM judge off)
 
 ## By category
 
 | category | passed | total |
 |---|---|---|
-| policy | 12 | 12 |
+| policy | 13 | 13 |
 | tool | 6 | 6 |
 | decline | 4 | 4 |
 | edge | 5 | 5 |
@@ -29,6 +29,7 @@ _Collected by calling the deployed function from inside the database (pg_net), b
 | policy-points-value | answered | search_policies | pass | - |
 | policy-refund-needs-manager | answered | search_policies | pass | - |
 | policy-portuguese | answered | search_policies | pass | - |
+| policy-portuguese-final-sale | answered | search_policies, search_policies | pass | - |
 | tool-order-in-transit | answered | get_order_status | pass | - |
 | tool-order-delayed-what-to-say | answered | get_order_status, search_policies | pass | - |
 | tool-missing-package | answered | get_order_status, search_policies, search_policies | pass | - |
@@ -90,9 +91,9 @@ Steps: 2
 ### policy-final-sale-exchange
 **Q:** Can a customer exchange underwear for a different size?
 
-**A (answered):** No. Underwear is final sale for hygiene reasons and cannot be returned or exchanged, even for a different size. Damaged or defective underwear follows the Damaged and Defective Items policy.
+**A (answered):** No. Underwear cannot be exchanged, including for a different size, for hygiene reasons.
 
-Sources: returns_and_refunds > Items that cannot be returned
+Sources: exchanges > Items that cannot be exchanged
 Steps: 2
 
 ### policy-defect-after-30
@@ -142,6 +143,14 @@ Steps: 2
 
 Sources: returns_and_refunds > Standard return window
 Steps: 2
+
+### policy-portuguese-final-sale
+**Q:** Posso trocar uma cueca por outro tamanho?
+
+**A (answered):** Não. Cuecas não podem ser trocadas por outro tamanho por motivos de higiene.
+
+Sources: exchanges > Items that cannot be exchanged; returns_and_refunds > Items that cannot be returned
+Steps: 3
 
 ### tool-order-in-transit
 **Q:** Where is order NM-1002?

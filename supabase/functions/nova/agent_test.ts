@@ -119,6 +119,18 @@ Deno.test("search finds the right section", () => {
   );
 });
 
+Deno.test("an exchange question reaches the final sale list", () => {
+  // The exchanges policy used to point at another document instead of listing the items,
+  // so "can I exchange underwear" never reached the rule that says no.
+  const hits = kb.search("Can a customer exchange underwear for a different size?");
+  assert(
+    hits.some(
+      (h) => h.heading === "Items that cannot be exchanged" && h.text.includes("Underwear"),
+    ),
+    JSON.stringify(hits.map((h) => h.heading)),
+  );
+});
+
 Deno.test("search matches plurals and returns nothing for noise", () => {
   assertEquals(kb.search("gift cards")[0]?.doc_id, "gift_cards_and_store_credit");
   assertEquals(kb.search("zzzz qqqq").length, 0);

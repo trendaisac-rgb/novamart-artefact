@@ -167,8 +167,8 @@ function Quality() {
             <ul className="mt-4 space-y-3 text-[14px] text-ink/85">
               {[
                 [
-                  "Policy answers (12)",
-                  "Holiday window over the 15 day electronics rule, Amazon vs. Marketplace, final sale, refunds that need a manager, one question in Portuguese.",
+                  "Policy answers (13)",
+                  "Holiday window over the 15 day electronics rule, Amazon vs. Marketplace, final sale, refunds that need a manager, two questions in Portuguese.",
                 ],
                 [
                   "Live order lookups (6)",

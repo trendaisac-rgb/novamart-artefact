@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-23T12:19:25",
-  "passed": 27,
-  "total": 27,
+  "generated_at": "2026-10-26T08:31:43",
+  "passed": 28,
+  "total": 28,
   "rate": 1.0,
   "seconds": 0,
   "threshold": 0.85,
@@ -151,11 +151,11 @@
       "status": "answered",
       "failures": [],
       "judge": null,
-      "answer": "No. Underwear is final sale for hygiene reasons and cannot be returned or exchanged, even for a different size. Damaged or defective underwear follows the Damaged and Defective Items policy.",
+      "answer": "No. Underwear cannot be exchanged, including for a different size, for hygiene reasons.",
       "sources": [
         {
-          "doc_id": "returns_and_refunds",
-          "heading": "Items that cannot be returned"
+          "doc_id": "exchanges",
+          "heading": "Items that cannot be exchanged"
         }
       ],
       "tools": [
@@ -164,8 +164,8 @@
       "steps": 2,
       "seconds": null,
       "usage": {
-        "input_tokens": 3492,
-        "output_tokens": 136,
+        "input_tokens": 3599,
+        "output_tokens": 118,
         "cache_read_input_tokens": 2776
       }
     },
@@ -329,6 +329,36 @@
         "input_tokens": 3200,
         "output_tokens": 148,
         "cache_read_input_tokens": 2777
+      }
+    },
+    {
+      "id": "policy-portuguese-final-sale",
+      "category": "policy",
+      "question": "Posso trocar uma cueca por outro tamanho?",
+      "status": "answered",
+      "failures": [],
+      "judge": null,
+      "answer": "Não. Cuecas não podem ser trocadas por outro tamanho por motivos de higiene.",
+      "sources": [
+        {
+          "doc_id": "exchanges",
+          "heading": "Items that cannot be exchanged"
+        },
+        {
+          "doc_id": "returns_and_refunds",
+          "heading": "Items that cannot be returned"
+        }
+      ],
+      "tools": [
+        "search_policies",
+        "search_policies"
+      ],
+      "steps": 3,
+      "seconds": null,
+      "usage": {
+        "input_tokens": 5306,
+        "output_tokens": 201,
+        "cache_read_input_tokens": 4268
       }
     },
     {

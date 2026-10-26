@@ -112,6 +112,17 @@
     sources_any: [returns_and_refunds]
     must_include: ["15", "dias"]
 
+
+- id: policy-portuguese-final-sale
+  category: policy
+  # The "Em português" shortcut on the home screen. Found wrong when re-testing the live
+  # demo: the exchanges policy did not list final sale items. Fixed in the document.
+  question: Posso trocar uma cueca por outro tamanho?
+  expect:
+    status: answered
+    sources_any: [exchanges, returns_and_refunds]
+    must_include: [["não", "nao"]]
+    must_not_include: ["Sim,", "Sim."]
 - id: tool-order-in-transit
   category: tool
   question: Where is order NM-1002?
